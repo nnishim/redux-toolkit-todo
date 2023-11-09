@@ -1,0 +1,26 @@
+.list {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+  flex-direction: column;
+  &_item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    input {
+      margin-right: 10px;
+    }
+    span {
+      margin-right: auto;
+    }
+  }
+  &_btn {
+    border-radius: 5px;
+    padding: 10px 15px;
+    background-color: #ba8fff;
+    transition: 0.2s ease-in-out;
+    &:hover {
+      background-color: #ff2424;
+    }
+  }
+}

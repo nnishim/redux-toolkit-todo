@@ -1,0 +1,31 @@
+.form {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+  &_input {
+    appearance: none;
+    background: 0 0;
+    border: 0;
+    color: #f5f6f7;
+    flex: 1;
+    font-size: 1.2em;
+    height: 100%;
+    outline: 0;
+    padding: 11px 20px;
+    border-radius: 5px 0 0 5px;
+    box-shadow: inset 0 0 0 2px #ba8fff;
+  }
+  &_btn {
+    padding: 11px 40px;
+    color: #fff;
+    background-color: #ba8fff;
+    border: 2px solid #ba8fff;
+    transition: 0.3s ease;
+    font-size: 16px;
+    border-radius: 0 5px 5px 0;
+    &:hover {
+      background-color: transparent;
+      color: #ba8fff;
+    }
+  }
+}
