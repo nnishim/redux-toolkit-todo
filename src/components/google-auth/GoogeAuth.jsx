@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './styles.module.scss';
-import firebase from 'firebase/app';
-import { initializeApp } from 'firebase/app';
 import {
   getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
+  onAuthStateChanged,
+  signInWithRedirect,
   signOut,
+  getRedirectResult,
 } from 'firebase/auth';
+import { initializeApp } from 'firebase/app';
+import { getDatabase } from 'firebase/database';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
 
-const app = initializeApp({
+const firebaseConfig = {
   apiKey: 'AIzaSyBjVLQEqBiqSMfj_96VVlg8gSS1U2-JnOo',
   authDomain: 'to-do-392be.firebaseapp.com',
   databaseURL: 'https://to-do-392be-default-rtdb.firebaseio.com',
@@ -18,42 +21,70 @@ const app = initializeApp({
   messagingSenderId: '457197518021',
   appId: '1:457197518021:web:d2c04be39884e3046904ac',
   measurementId: 'G-H00EL5ZPSK',
-});
+};
 
-const auth = getAuth(app);
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const database = getDatabase(firebaseApp);
 
-const GoogleSignInButton = () => {
+const GoogleAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-      setIsAuthenticated(true);
-      console.log('Вход через Google успешно выполнен.');
-    } catch (error) {
-      console.error('Ошибка входа через Google:', error);
-    }
+  const provider = new firebase.auth.GoogleAuthProvider();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsAuthenticated(true);
+        setLoading(false);
+        console.log(user);
+      } else {
+        setIsAuthenticated(false);
+        setLoading(false);
+        console.log('Пользователь вышел из системы.');
+      }
+    });
+
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result.user) {
+          setIsAuthenticated(true);
+        }
+      })
+      .catch((error) => {
+        setError(error.message);
+        setLoading(false);
+      });
+  }, []);
+
+  const signInWithGoogle = () => {
+    signInWithRedirect(auth, provider).catch((error) => {
+      setError(error.message);
+    });
   };
 
-  const signOutWithGoogle = async () => {
-    try {
-      await signOut(auth);
-      setIsAuthenticated(false);
-      console.log('Выход выполнен.');
-    } catch (error) {
-      console.error('Ошибка выхода:', error);
-    }
+  const signOutWithGoogle = () => {
+    signOut(auth).catch((error) => {
+      setError(error.message);
+    });
   };
+
+  if (loading) {
+    return <div>Загрузка...</div>;
+  }
 
   return (
-    <button
-      className={styles.button}
-      onClick={isAuthenticated ? signOutWithGoogle : signInWithGoogle}
-    >
-      {isAuthenticated ? 'Выйти' : 'Войти'}
-    </button>
+    <div>
+      <button
+        className={styles.button}
+        onClick={isAuthenticated ? signOutWithGoogle : signInWithGoogle}
+      >
+        {isAuthenticated ? 'Выйти' : 'Войти'}
+      </button>
+    </div>
   );
 };
 
-export default GoogleSignInButton;
+export default GoogleAuth;

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styles from './styles.module.scss';
 import { Link, useLocation } from 'react-router-dom';
 import GoogleSignInButton from '../google-auth/GoogeAuth';
+import Logo from '../../images/logo.png';
 
 const Header = () => {
   // const location = useLocation();
@@ -14,7 +15,9 @@ const Header = () => {
       <div className="container">
         <nav className={styles.navbar}>
           <div className={`${styles.logo} ${styles.navbar_logo}`}>
-            <Link to="/">LOGO</Link>
+            <Link className={styles.navbar_logo__link} to="/">
+              <img src={Logo} alt="logo" />
+            </Link>
           </div>
           <div className={styles.navbar_links}>
             {/* {links.map((link, index) => (

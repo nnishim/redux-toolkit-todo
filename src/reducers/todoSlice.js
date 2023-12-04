@@ -1,6 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getDatabase, ref, set, remove, update } from 'firebase/database';
-import { database } from '../firebase/firebase';
 
 const initialState = {
   todos: [],
@@ -16,21 +14,17 @@ const todoSlice = createSlice({
         text: action.payload.text,
         completed: false,
       };
-      // Сохранение данных в Firebase
-      set(ref(database, `todos/${newTodo.id}`), newTodo);
+      state.todos.push(newTodo);
     },
     removeTodo: (state, action) => {
       const id = action.payload;
-      // Удаление данных из Firebase
-      remove(ref(database, `todos/${id}`));
+      state.todos = state.todos.filter((todo) => todo.id !== id);
     },
     toggleTodo: (state, action) => {
       const id = action.payload;
       const todo = state.todos.find((todo) => todo.id === id);
       if (todo) {
         todo.completed = !todo.completed;
-        // Обновление данных в Firebase
-        update(ref(database, `todos/${id}`), { completed: todo.completed });
       }
     },
     setTodos: (state, action) => {
